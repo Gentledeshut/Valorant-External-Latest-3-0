@@ -280,3 +280,68 @@ int isValidCourse(const char *course) {
     }
     return 1;
 }
+void sortStudentsByAverage() {
+    if (student_count == 0) {
+        printf("No students to sort.\n");
+        return;
+    }
+
+    
+    int indices[MAX_STUDENTS];
+    for (int i = 0; i < student_count; i++) {
+        indices[i] = i;
+    }
+
+    
+    for (int i = 0; i < student_count - 1; i++) {
+        for (int j = 0; j < student_count - i - 1; j++) {
+            float avg1 = calculateStudentAverage(indices[j]);
+            float avg2 = calculateStudentAverage(indices[j + 1]);
+
+            if (avg1 < avg2) {
+                // Меняем индексы местами
+                int temp = indices[j];
+                indices[j] = indices[j + 1];
+                indices[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\n=== STUDENTS SORTED BY AVERAGE GRADE (DESCENDING) ===\n");
+    for (int i = 0; i < student_count; i++) {
+        int idx = indices[i];
+        float avg = calculateStudentAverage(idx);
+        printf("%d. %s (ID: %d) - Avg: %.2f\n",
+               i + 1, students[idx].name, students[idx].id, avg);
+    }
+}
+
+void displayStatistics() {
+    if (student_count == 0) {
+        printf("No students in the system.\n");
+        return;
+    }
+
+    int totalAge = 0;
+    float totalAverage = 0.0f;
+    int studentsWithGrades = 0;
+
+    for (int i = 0; i < student_count; i++) {
+        totalAge += students[i].age;
+
+        if (students[i].grade_count > 0) {
+            studentsWithGrades++;
+            totalAverage += calculateStudentAverage(i);
+        }
+    }
+
+    float avgAge = (float)totalAge / student_count;
+    float overallAvg = (studentsWithGrades > 0) ?
+                     totalAverage / studentsWithGrades : 0.0f;
+
+    printf("\n=== SYSTEM STATISTICS ===\n");
+    printf("Total students: %d\n", student_count);
+    printf("Average age: %.1f\n", avgAge);
+    printf("Students with grades: %d\n", studentsWithGrades);
+    printf("Overall average grade: %.2f\n", overallAvg);
+}
